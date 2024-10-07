@@ -1,5 +1,7 @@
 const fs = require('fs');
 
+// const path = 'src\files\products.txt'
+
 class ProductManager {
   constructor(path) {
     this.path = path;
@@ -8,6 +10,7 @@ class ProductManager {
   async getProducts() {
     try {
       const data = await fs.promises.readFile(this.path, 'utf-8');
+      console.log(data);
       return JSON.parse(data);
     } catch (error) {
       return []; 
@@ -67,5 +70,25 @@ class ProductManager {
     await fs.promises.writeFile(this.path, JSON.stringify(updatedProducts, null, 2));
   }
 }
+
+const manager = new ProductManager();
+
+
+async () => {
+  try {
+    await manager.addProduct({
+      title: "Produto 1",
+    description: "Descrição do Produto 1",
+    price: 100,
+    thumbnail: "caminho/para/imagem1.jpg",
+    code: "ABC123",
+    stock: 10 
+    })
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+console.log(manager.getProducts());
 
 module.exports = ProductManager;

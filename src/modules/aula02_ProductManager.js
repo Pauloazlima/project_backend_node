@@ -61,3 +61,5 @@ class ProductManager {
   
   console.log(manager.getProductById(1)); // Exibe o produto com id 1
   console.log(manager.getProductById(3)); // Exibe "Não encontrado"
+	console.log(manager.products);
+	
