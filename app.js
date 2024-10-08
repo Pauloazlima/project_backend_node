@@ -1,40 +1,14 @@
 const express = require('express');
-const ProductManager = require('./src/modules/aula04_NewProductManager');
-
-const productManager = new ProductManager('./src/files/products.json');
 const app = express();
-const PORT = 8080;
 
-app.get('/products', async (req, res) => {
-  try {
-    const products = await productManager.getProducts();
+PORT = 8080
 
-    const limit = req.query.limit;
+const productsRouter = require('./src/routes/products.routes')
 
-    if (limit) {
-      const limitedProducts = products.slice(0, parseInt(limit));
-      return res.json({ products: limitedProducts });
-    }
+app.use(express.json());
 
-    return res.json({ products });
-  } catch (error) {
-    return res.status(500).json({ error: 'Erro ao obter os produtos' });
-  }
-}
-);
-
-app.get('/products/:pid', async (req, res) => {
-  try {
-    const pid = parseInt(req.params.pid);
-    const product = await productManager.getProductById(pid);
-    return res.json({ product });
-  } catch (error) {
-    return res.status(404).json({ error: 'Produto não encontrado' });
-  }
-});
+app.use('/products', productsRouter)
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
-
-

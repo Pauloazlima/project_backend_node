@@ -1,10 +1,11 @@
 const express = require('express');
-const router = express.Router();
+const ProductManager = require('./src/modules/aula04_NewProductManager');
 
-const ProductManager = require('../modules/aula04_NewProductManager');
-const productManager = new ProductManager('src/files/products.json');
+const productManager = new ProductManager('./src/files/products.json');
+const app = express();
+const PORT = 8080;
 
-router.get('/', async (req, res) => {
+app.get('/products', async (req, res) => {
   try {
     const products = await productManager.getProducts();
 
@@ -22,7 +23,7 @@ router.get('/', async (req, res) => {
 }
 );
 
-router.get('/:pid', async (req, res) => {
+app.get('/products/:pid', async (req, res) => {
   try {
     const pid = parseInt(req.params.pid);
     const product = await productManager.getProductById(pid);
@@ -32,7 +33,8 @@ router.get('/:pid', async (req, res) => {
   }
 });
 
-module.exports = router;
-
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
 
 
