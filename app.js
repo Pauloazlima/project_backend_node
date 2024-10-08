@@ -1,13 +1,14 @@
 const express = require('express');
-const ProductManager = require('./modules/ProductManager');
+const ProductManager = require('./src/modules/aula04_NewProductManager');
 
-const productManager = new ProductManager('./products.json');
+const productManager = new ProductManager('./src/files/products.json');
 const app = express();
 const PORT = 8080;
 
 app.get('/products', async (req, res) => {
   try {
     const products = await productManager.getProducts();
+
     const limit = req.query.limit;
 
     if (limit) {
@@ -19,7 +20,8 @@ app.get('/products', async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: 'Erro ao obter os produtos' });
   }
-});
+}
+);
 
 app.get('/products/:pid', async (req, res) => {
   try {

@@ -2,7 +2,7 @@ const fs = require('fs');
 
 class ProductManager {
     constructor(path){
-			this.path = '../files/products.txt';
+			this.path = path;
     }
 
 		async getProducts(){
@@ -74,11 +74,10 @@ class ProductManager {
 		}
 
   }
-  
-  const manager = new ProductManager();
-  
-	
 
+	module.exports = ProductManager
+	
+  // const manager = new ProductManager('../files/products.txt');
 	
 	// console.log('----getproductById----1');
 	// manager.getProductById(2);
@@ -115,5 +114,5 @@ class ProductManager {
   // });
   
   // console.log('----getproducts----1');
-	// manager.getproducts();
+	// manager.getProducts();
   // console.log('----getproducts----2');
