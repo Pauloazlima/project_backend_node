@@ -7,5 +7,9 @@
         "quantity": 1
       }
     ]
+  },
+  {
+    "id": 2,
+    "products": []
   }
 ]
