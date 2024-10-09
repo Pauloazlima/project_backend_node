@@ -16,8 +16,16 @@ class ProductManager {
 		}
 
     async addProduct(product) {
+		const requiredFields = ["title", "description", "price", "thumbnail", "code", "stock", "category"];
+		const missingFields = requiredFields.filter(field => !product[field]);
+
+		if (missingFields.length > 0) {
+			throw new Error(`Campos obrigatórios ausentes: ${missingFields.join(', ')}`);
+		}
+		product.status = product.status !== undefined ? product.status : true;
+			
         const products = await this.getProducts();
-				const productExists = products.some((p) => p.code ===product.code)
+				const productExists = products.some((p) => p.code === product.code)
 				if (productExists){
 					throw new Error('Código já existente')
 				}
