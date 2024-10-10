@@ -30,25 +30,22 @@ router.get('/:cid', async (req, res) => {
   }
 });
 
-// Rota para adicionar um produto ao carrinho com quantidade
 router.post('/:cid/product/:pid', async (req, res) => {
   try {
-    const cartId = parseInt(req.params.cid);
-    const productId = parseInt(req.params.pid);
+        const cartId = parseInt(req.params.cid);
+        const productId = parseInt(req.params.pid);
 
-    // Verifique se o produto existe
-    const productData = await productManager.getProductById(productId);
-    if (!productData) {
-        return res.status(404).json({ error: 'Produto não encontrado' });
+        const productData = await productManager.getProductById(productId);
+        if (!productData) {
+            return res.status(404).json({ error: 'Produto não encontrado' });
+        }
+
+        const updatedCart = await cartManager.addProductToCart(cartId, productId);
+
+        return res.json({ cart: updatedCart });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erro ao adicionar o produto ao carrinho' });
     }
-
-    // Chame a função addProductToCart com apenas o productId
-    const updatedCart = await cartManager.addProductToCart(cartId, productId);
-
-    return res.json({ cart: updatedCart });
-} catch (error) {
-    return res.status(500).json({ error: 'Erro ao adicionar o produto ao carrinho' });
-}
 });
 
 module.exports = router;

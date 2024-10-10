@@ -49,14 +49,13 @@ class CartManager {
         throw new Error('Carrinho não encontrado');
     }
 
-    const productIndex = cart.products.findIndex(item => item.product.id === productId);
+    const productIndex = cart.products.findIndex(item => item.product === productId);
 
     if (productIndex !== -1) {
-        // Se o produto já existe, incremente a quantidade
         cart.products[productIndex].quantity += 1;
     } else {
-        const product = await productManager.getProductById(productId); // Obtenha o objeto completo do produto
-        cart.products.push({ product, quantity: 1 });
+        const product = await productManager.getProductById(productId);
+        cart.products.push({ product: productId, quantity: 1 });
     }
 
     await this.saveCarts(carts);
