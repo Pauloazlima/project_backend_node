@@ -1,5 +1,9 @@
 const fs = require('fs');
 
+const ProductManager = require('../modules/ProductManager')
+
+const productManager = new ProductManager('src/files/products.json');
+
 class CartManager {
   constructor(path) {
     this.path = path;
@@ -42,20 +46,22 @@ class CartManager {
     const cart = carts.find(cart => cart.id === cartId);
 
     if (!cart) {
-      throw new Error('Carrinho não encontrado');
+        throw new Error('Carrinho não encontrado');
     }
 
-    const productIndex = cart.products.findIndex(prod => prod.product === productId);
+    const productIndex = cart.products.findIndex(item => item.product.id === productId);
 
     if (productIndex !== -1) {
-      cart.products[productIndex].quantity += 1;
+        // Se o produto já existe, incremente a quantidade
+        cart.products[productIndex].quantity += 1;
     } else {
-      cart.products.push({ product: productId, quantity: 1 });
+        const product = await productManager.getProductById(productId); // Obtenha o objeto completo do produto
+        cart.products.push({ product, quantity: 1 });
     }
 
     await this.saveCarts(carts);
     return cart;
-  }
+}
 }
 
 module.exports = CartManager;
