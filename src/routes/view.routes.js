@@ -12,8 +12,8 @@ router.get('/', async (req, res) => {
 
 router.get('/realtimeproducts', async (req, res) => {
   const products = await productManager.getProducts();
-  productsCurated = JSON.stringify(products)  
-  res.render('layouts/realTimeProducts', { productsCurated });
+  // productsCurated = JSON.stringify(products) 
+  res.render('layouts/realTimeProducts', { products });
 })
 
 module.exports = router;

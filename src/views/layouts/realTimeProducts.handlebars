@@ -24,12 +24,45 @@
     <!-- Lista de produtos -->
     <ul id="productList">
         {{#each products}}
-            <li>{{this.title}} - ${{this.price}}</li>
+            <li>
+                <strong>Title:</strong> {{this.title}} <br>
+                <strong>Description:</strong> {{this.description}} <br>
+                <strong>Price:</strong> ${{this.price}} <br>
+                <strong>Thumbnail:</strong> <img src="{{this.thumbnail}}" alt="{{this.title}}" style="width: 50px; height: 50px;"> <br>
+                <strong>Code:</strong> {{this.code}} <br>
+                <strong>Stock:</strong> {{this.stock}} <br>
+                <strong>Category:</strong> {{this.category}} <br>
+                <hr>
+            </li>
         {{/each}}
     </ul>
 
     <script>
         const socket = io();
+
+        // Função para adicionar produtos à lista na tela
+        const addProductsToList = (products) => {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = ''; // Limpa a lista antes de adicionar novos produtos
+            products.forEach(product => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>Title:</strong> ${product.title} <br>
+                    <strong>Description:</strong> ${product.description} <br>
+                    <strong>Price:</strong> $${product.price} <br>
+                    <strong>Thumbnail:</strong> <img src="${product.thumbnail}" alt="${product.title}" style="width: 50px; height: 50px;"> <br>
+                    <strong>Code:</strong> ${product.code} <br>
+                    <strong>Stock:</strong> ${product.stock} <br>
+                    <strong>Category:</strong> ${product.category} <br>
+                    <hr>
+                `;
+                productList.appendChild(li);
+            });
+        };
+
+        // Ao carregar a página, adiciona a lista de produtos já existente
+        const initialProducts = {{{json products}}}; // Passa a lista de produtos em formato JSON
+        addProductsToList(initialProducts);
 
         // Enviar dados do produto pelo WebSocket quando o formulário for enviado
         document.getElementById('productForm').addEventListener('submit', function(event) {
@@ -53,15 +86,8 @@
 
         // Atualizar lista de produtos em tempo real ao receber 'updateProducts'
         socket.on('updateProducts', (products) => {
-            const productList = document.getElementById('productList');
-            productList.innerHTML = '';
-            products.forEach(product => {
-                const li = document.createElement('li');
-                li.textContent = `${product.title} - $${product.price}`;
-                productList.appendChild(li);
-            });
+            addProductsToList(products); // Atualiza a lista com a nova lista de produtos
         });
     </script>
 </body>
 </html>
-

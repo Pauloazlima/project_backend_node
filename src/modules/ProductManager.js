@@ -8,7 +8,6 @@ class ProductManager {
 		async getProducts(){
 			try{
 				const data = await fs.promises.readFile(this.path, 'utf-8')
-				// console.log(data);
 				return JSON.parse(data)
 			} catch (error){
 				return[];
