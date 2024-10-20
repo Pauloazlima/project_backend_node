@@ -12,13 +12,18 @@
     <!-- Formulário para adicionar produto -->
     <form id="productForm">
         <input type="text" id="title" placeholder="Title" required>
+        <input type="text" id="description" placeholder="Description" required>
         <input type="number" id="price" placeholder="Price" required>
+        <input type="text" id="thumbnail" placeholder="Thumbnail URL" required>
+        <input type="text" id="code" placeholder="Product Code" required>
+        <input type="number" id="stock" placeholder="Stock" required>
+        <input type="text" id="category" placeholder="Category" required>
         <button type="submit">Add Product</button>
     </form>
 
     <!-- Lista de produtos -->
     <ul id="productList">
-        {{#each products}} <!-- Usa 'products' que foi passado pela rota -->
+        {{#each products}}
             <li>{{this.title}} - ${{this.price}}</li>
         {{/each}}
     </ul>
@@ -31,15 +36,19 @@
             event.preventDefault();
             const productData = {
                 title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
                 price: document.getElementById('price').value,
+                thumbnail: document.getElementById('thumbnail').value,
+                code: document.getElementById('code').value,
+                stock: document.getElementById('stock').value,
+                category: document.getElementById('category').value
             };
 
             // Emite o evento 'addProduct' para o servidor com os dados do produto
             socket.emit('addProduct', productData);
 
             // Limpar os campos do formulário após envio
-            document.getElementById('title').value = '';
-            document.getElementById('price').value = '';
+            document.getElementById('productForm').reset();
         });
 
         // Atualizar lista de produtos em tempo real ao receber 'updateProducts'
@@ -55,3 +64,4 @@
     </script>
 </body>
 </html>
+
