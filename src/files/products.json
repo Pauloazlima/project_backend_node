@@ -34,5 +34,16 @@
     "thumbnail": "caminho/para/imagem4.jpg",
     "code": "444",
     "stock": 40
+  },
+  {
+    "id": "5",
+    "title": "Produto 5",
+    "description": "Descrição do Produto 5",
+    "price": "500",
+    "thumbnail": "caminho/para/imagem5.jpg",
+    "code": "555",
+    "stock": "50",
+    "category": "Categoria5",
+    "status": true
   }
 ]

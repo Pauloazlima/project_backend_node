@@ -3,7 +3,7 @@ const router = express.Router();
 const ProductManager = require('../modules/ProductManager');
 const productManager = new ProductManager('src/files/products.json');
 
-// Rota para a página inicial que renderiza a lista de produtos
+
 router.get('/', async (req, res) => {
   try {
     const products = await productManager.getProducts();
@@ -13,5 +13,12 @@ router.get('/', async (req, res) => {
     res.status(500).send('Erro ao carregar produtos');
   }
 });
+
+router.post('/realtimeproducts', async (req, res) => {
+  const products = await productManager.getProducts();
+
+  productsCurated = products.JSON.stringfy(products)
+  res.render('layouts/realTimeProducts', { products });
+})
 
 module.exports = router;
