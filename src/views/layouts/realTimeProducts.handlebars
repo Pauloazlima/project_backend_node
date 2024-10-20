@@ -1,11 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{title}}</title>
-</head>
-<body>
-    {{{productsCurated}}}
-</body>
-</html>
+<h1>Lista de Produtos</h1>
+<ul id="productList">
+  {{#each products}}
+    <li>{{this.title}} - {{this.price}}</li>
+  {{/each}}
+</ul>
+
+<form id="addProductForm">
+  <input type="text" id="title" placeholder="Título do Produto" required />
+  <input type="number" id="price" placeholder="Preço" required />
+  <button type="submit">Adicionar Produto</button>
+</form>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+
+  // Submeter o formulário para adicionar produto
+  document.getElementById('addProductForm').onsubmit = (e) => {
+    e.preventDefault();
+    const title = document.getElementById('title').value;
+    const price = document.getElementById('price').value;
+    socket.emit('addProduct', { title, price });
+  };
+
+  // Receber atualizações em tempo real dos produtos
+  socket.on('updateProducts', (products) => {
+    const productList = document.getElementById('productList');
+    productList.innerHTML = '';
+    products.forEach(product => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `${product.title} - ${product.price}`;
+      productList.appendChild(listItem);
+    });
+  });
