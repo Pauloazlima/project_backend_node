@@ -1,35 +1,58 @@
-<h1>Lista de Produtos</h1>
-<ul id="productList">
-  {{#each products}}
-    <li>{{this.title}} - {{this.price}}</li>
-  {{/each}}
-</ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Products</title>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Real-Time Products</h1>
 
-<form id="addProductForm">
-  <input type="text" id="title" placeholder="Título do Produto" required />
-  <input type="number" id="price" placeholder="Preço" required />
-  <button type="submit">Adicionar Produto</button>
-</form>
+  <!-- Formulário para adicionar um novo produto -->
+  <form id="productForm">
+    <input type="text" id="title" placeholder="Title" required />
+    <input type="number" id="price" placeholder="Price" required />
+    <input type="text" id="description" placeholder="Description" required />
+    <button type="submit">Add Product</button>
+  </form>
 
-<script src="/socket.io/socket.io.js"></script>
-<script>
-  const socket = io();
+  <!-- Lista de produtos -->
+  <ul id="productList">
+    {{#each products}}
+      <li>{{this.title}} - ${{this.price}}: {{this.description}}</li>
+    {{/each}}
+  </ul>
 
-  // Submeter o formulário para adicionar produto
-  document.getElementById('addProductForm').onsubmit = (e) => {
-    e.preventDefault();
-    const title = document.getElementById('title').value;
-    const price = document.getElementById('price').value;
-    socket.emit('addProduct', { title, price });
-  };
+  <script>
+    const socket = io();
 
-  // Receber atualizações em tempo real dos produtos
-  socket.on('updateProducts', (products) => {
-    const productList = document.getElementById('productList');
-    productList.innerHTML = '';
-    products.forEach(product => {
-      const listItem = document.createElement('li');
-      listItem.textContent = `${product.title} - ${product.price}`;
-      productList.appendChild(listItem);
+    // Função para adicionar o produto via WebSocket
+    document.getElementById('productForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const title = document.getElementById('title').value;
+      const price = document.getElementById('price').value;
+      const description = document.getElementById('description').value;
+
+      socket.emit('addProduct', { title, price, description });
+
+      // Limpar os campos do formulário
+      document.getElementById('title').value = '';
+      document.getElementById('price').value = '';
+      document.getElementById('description').value = '';
     });
-  });
+
+    // Atualizar a lista de produtos em tempo real
+    socket.on('updateProducts', function(products) {
+      const productList = document.getElementById('productList');
+      productList.innerHTML = ''; // Limpar a lista existente
+
+      products.forEach(product => {
+        const li = document.createElement('li');
+        li.textContent = `${product.title} - $${product.price}: ${product.description}`;
+        productList.appendChild(li);
+      });
+    });
+  </script>
+</body>
+</html>
