@@ -21,23 +21,21 @@ app.engine('handlebars', handlebars.engine({ defaultLayout: 'realTimeProducts' }
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
-// Rotas
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/', viewRouter);
 
-// WebSocket para atualização em tempo real
 io.on('connection', (socket) => {
   console.log('Novo cliente conectado');
 
   const updateProductList = async () => {
     const products = await productManager.getProducts();
-    io.emit('updateProducts', products); // Envia a lista atualizada de produtos
+    io.emit('updateProducts', products);
   };
 
   socket.on('addProduct', async (productData) => {
-    await productManager.addProduct(productData); // Adiciona o produto
-    updateProductList(); // Atualiza a lista de produtos
+    await productManager.addProduct(productData);
+    updateProductList();
   });
 
   socket.on('disconnect', () => {
@@ -45,7 +43,6 @@ io.on('connection', (socket) => {
   });
 });
 
-// Inicialização do servidor
 httpServer.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

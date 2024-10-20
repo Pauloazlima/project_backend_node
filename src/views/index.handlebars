@@ -15,7 +15,6 @@
 <script>
   const socket = io();
 
-  // Submeter o formulário para adicionar produto
   document.getElementById('addProductForm').onsubmit = (e) => {
     e.preventDefault();
     const title = document.getElementById('title').value;
@@ -23,7 +22,6 @@
     socket.emit('addProduct', { title, price });
   };
 
-  // Receber atualizações em tempo real dos produtos
   socket.on('updateProducts', (products) => {
     const productList = document.getElementById('productList');
     productList.innerHTML = '';
