@@ -14,11 +14,12 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/realtimeproducts', async (req, res) => {
+router.get('/realtimeproducts', async (req, res) => {
   const products = await productManager.getProducts();
-
-  productsCurated = products.JSON.stringfy(products)
-  res.render('layouts/realTimeProducts', { products });
+  productsCurated = JSON.stringify(products)
+  console.log(productsCurated);
+  
+  res.render('layouts/realTimeProducts', { productsCurated });
 })
 
 module.exports = router;
