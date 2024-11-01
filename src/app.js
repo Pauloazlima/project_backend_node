@@ -9,13 +9,23 @@ const productManager = new ProductManager('src/files/products.json');
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
+const mongoose = require('mongoose');
+
 PORT = 8080
 
 const productsRouter = require('./routes/products.routes')
 const cartsRouter = require('./routes/carts.routes')
 const viewRouter = require('./routes/view.routes');
+const productsMongoRouter = require('./routes/productsMongo.routes')
 
 app.use(express.json());
+
+mongoose.connect('mongodb+srv://pauloazlima3008:1234@database.hoeqb.mongodb.net')
+.then( (() => {
+  console.log('Conectado ao MongoDB com sucesso');
+})).catch((error) => {
+  console.log('Erro ao conectar ao MongoDB: ', error);
+})
 
 app.engine('handlebars', handlebars.engine({ defaultLayout: 'realTimeProducts' }));
 app.set('view engine', 'handlebars');
@@ -24,6 +34,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/', viewRouter);
+app.use('/products/mongo', productsMongoRouter)
 
 io.on('connection', (socket) => {
   console.log('Novo cliente conectado');
