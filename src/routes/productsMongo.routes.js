@@ -13,3 +13,6 @@ router.get('/mongo', async (req,res) => {
     res.status(500).send({result: error})
 }
 })
+
+
+module.exports = router

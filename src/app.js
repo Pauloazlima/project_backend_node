@@ -20,7 +20,7 @@ const productsMongoRouter = require('./routes/productsMongo.routes')
 
 app.use(express.json());
 
-mongoose.connect('mongodb+srv://pauloazlima3008:1234@database.hoeqb.mongodb.net')
+mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/')
 .then( (() => {
   console.log('Conectado ao MongoDB com sucesso');
 })).catch((error) => {
