@@ -4,7 +4,7 @@ const productsModel = require('../models/products.model')
 
 const router = express.Router();
 
-router.get('/mongo', async (req,res) => {
+router.get('/', async (req,res) => {
   try {
     let getProducts = await productsModel.find();
     res.json({result: 'sucesso', payload: getProducts})
@@ -20,7 +20,7 @@ router.post('/add', async (req,res) => {
       if (!title, !description, !price, !thumbnail, !code, !stock, !category){
         return res.status(500).send({result: 'Todos os campos são obrigatórios'})
       }
-      let inputInfo = await productsModel.create(body)
+      let inputInfo = await productsModel.create(req.body)
       res.status(201).json({result: 'success', payload: inputInfo})
   } catch (error){
     console.log('não foi possivel adicionar as informacoes do produto');
