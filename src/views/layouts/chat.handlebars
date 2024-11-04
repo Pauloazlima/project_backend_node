@@ -2,48 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat</title>
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const socket = io();
-      const form = document.getElementById('messageForm');
-      const messageInput = document.getElementById('messageInput');
-      const messagesContainer = document.getElementById('messagesContainer');
-
-      // Receber mensagens anteriores
-      socket.on('previousMessages', (messages) => {
-        messages.forEach((msg) => {
-          const msgElement = document.createElement('div');
-          msgElement.textContent = `${msg.user}: ${msg.message}`;
-          messagesContainer.appendChild(msgElement);
-        });
-      });
-
-      // Receber novas mensagens
-      socket.on('message', (msg) => {
-        const msgElement = document.createElement('div');
-        msgElement.textContent = `${msg.user}: ${msg.message}`;
-        messagesContainer.appendChild(msgElement);
-      });
-
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const user = document.getElementById('userInput').value;
-        const message = messageInput.value;
-        socket.emit('newMessage', { user, message });
-        messageInput.value = '';
-      });
-    });
-  </script>
 </head>
 <body>
   <h1>Chat</h1>
-  <div id="messagesContainer"></div>
-  <form id="messageForm">
-    <input type="text" id="userInput" placeholder="Seu nome" required>
-    <input type="text" id="messageInput" placeholder="Sua mensagem" required>
+  <form id="chatForm">
+    <input type="text" id="username" placeholder="Seu nome" required>
+    <input type="text" id="message" placeholder="Sua mensagem" required>
     <button type="submit">Enviar</button>
   </form>
+  <div id="chatContainer"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    
+    document.getElementById('chatForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const user = document.getElementById('username').value;
+      const message = document.getElementById('message').value;
+      socket.emit('newMessage', { user, message });
+      document.getElementById('message').value = '';
+    });
+
+    socket.on('message', (msg) => {
+      const container = document.getElementById('chatContainer');
+      const newMessage = document.createElement('p');
+      newMessage.textContent = `${msg.user}: ${msg.message}`;
+      container.appendChild(newMessage);
+    });
+  </script>
 </body>
 </html>
+
+

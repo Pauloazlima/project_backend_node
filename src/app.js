@@ -18,6 +18,8 @@ const cartsRouter = require('./routes/carts.routes')
 const viewRouter = require('./routes/view.routes');
 const productsMongoRouter = require('./routes/productsMongo.routes')
 
+const Message = require('./models/messages.model');
+
 app.use(express.json());
 
 mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/')
@@ -27,7 +29,11 @@ mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongod
   console.log('Erro ao conectar ao MongoDB: ', error);
 })
 
-app.engine('handlebars', handlebars.engine({ defaultLayout: 'realTimeProducts' }));
+app.get('/layouts/chat', (req, res) => {
+  res.render('chat')
+})
+
+app.engine('handlebars', handlebars.engine(/*{ defaultLayout: 'realTimeProducts' }*/));
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -36,17 +42,28 @@ app.use('/api/carts', cartsRouter);
 app.use('/', viewRouter);
 app.use('/products/mongo', productsMongoRouter)
 
+const chatRouter = require('./routes/chat.routes');
+app.use('/chat', chatRouter);
+
+app.set('views', path.join(__dirname, 'views'));
+
 io.on('connection', (socket) => {
   console.log('Novo cliente conectado');
 
-  const updateProductList = async () => {
-    const products = await productManager.getProducts();
-    io.emit('updateProducts', products);
-  };
+  Message.find().then((messages) => {
+    messages.forEach((msg) => {
+      socket.emit('message', msg);
+    });
+  });
 
-  socket.on('addProduct', async (productData) => {
-    await productManager.addProduct(productData);
-    updateProductList();
+  socket.on('newMessage', async (data) => {
+    try {
+      const newMessage = new Message(data);
+      await newMessage.save();
+      io.emit('message', data);
+    } catch (error) {
+      console.error('Erro ao salvar mensagem:', error);
+    }
   });
 
   socket.on('disconnect', () => {
