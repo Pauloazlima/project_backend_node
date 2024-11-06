@@ -17,6 +17,7 @@ const productsRouter = require('./routes/products.routes')
 const cartsRouter = require('./routes/carts.routes')
 const viewRouter = require('./routes/view.routes');
 const productsMongoRouter = require('./routes/productsMongo.routes')
+const cartsMongoRouter = require('./routes/cartsMongo.routes')
 
 const Message = require('./models/messages.model');
 
@@ -41,6 +42,7 @@ app.use('/api/products', productsRouter);
 app.use('/api/carts', cartsRouter);
 app.use('/', viewRouter);
 app.use('/products/mongo', productsMongoRouter)
+app.use('/carts/mongo', cartsMongoRouter)
 
 const chatRouter = require('./routes/chat.routes');
 app.use('/chat', chatRouter);
