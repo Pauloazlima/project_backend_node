@@ -30,7 +30,7 @@ mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongod
   console.log('Erro ao conectar ao MongoDB: ', error);
 })
 
-app.get('/layouts/chat', (req, res) => {
+app.get('/chat', (req, res) => {
   res.render('chat')
 })
 
