@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 const cartsCollection = 'carts';
 
 const cartsSchema = new mongoose.Schema({
-    Produto: String
-
-})
+    products: {
+        type: [Number],
+        required: true
+    }
+});
 
 module.exports = mongoose.model(cartsCollection, cartsSchema);

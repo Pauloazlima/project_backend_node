@@ -16,5 +16,35 @@ router.post('/create', async (req,res) => {
   }
 })
 
+router.put('/:cid', async (req, res) => {
+	try{
+		const { cid } = req.params;
+
+		let getCartInfo = await cartsModel.findByIdAndUpdate(cid, req.body)
+
+		res.status(201).json({result: 'success', payload: getCartInfo})
+		
+	} catch(error){
+		res.status(500).send({result: 'erro', error: 'Cart não localizado'})
+	}
+})
+
+router.post('/add/:cid', async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const { products } = req.body;
+
+    const updatedCart = await cartsModel.findByIdAndUpdate(
+      cid,
+      { $addToSet: { products: { $each: products } } },
+      { new: true }
+    );
+
+    res.status(200).json(updatedCart);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao atualizar o carrinho' });
+  }
+});
 
 module.exports = router
