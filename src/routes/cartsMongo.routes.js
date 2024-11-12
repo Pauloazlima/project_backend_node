@@ -5,16 +5,47 @@ const cartsModel = require('../models/carts.model')
 const router = express.Router();
 
 router.post('/create', async (req,res) => {
-  try {
+	try {
 		console.log(req.body);
 		
-      let inputInfo = await cartsModel.create(req.body)
-      res.status(201).json({result: 'success', payload: inputInfo})
-  } catch (error){
-    console.log('não foi possivel adicionar as informacoes do produto');
-    res.status(500).send({result: 'erro', error: 'Erro ao adicionar'})
-  }
+			let inputInfo = await cartsModel.create(req.body)
+			res.status(201).json({result: 'success', payload: inputInfo})
+	} catch (error){
+		console.log('não foi possivel adicionar as informacoes do produto');
+		res.status(500).send({result: 'erro', error: 'Erro ao adicionar'})
+	}
 })
+
+
+router.get('/', async (req, res) => {
+  try {
+    const carts = await cartsModel.find();
+
+    res.status(200).json(carts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao buscar os carrinhos' });
+  }
+});
+
+router.get('/:cid', async (req, res) => {
+  try {
+    const { cid } = req.params;
+
+    const cart = await cartsModel.findById(cid);
+
+    if (!cart) {
+      return res.status(404).json({ message: 'Carrinho não encontrado' });
+    }
+
+    res.status(200).json(cart);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao buscar o carrinho' });
+  }
+});
+
+
 
 router.put('/:cid', async (req, res) => {
 	try{
@@ -48,11 +79,10 @@ router.post('/add/:cid', async (req, res) => {
 });
 
 
-router.delete('/:cid', async (req, res) => {
+router.delete('/delete/:cid', async (req, res) => {
   try {
     const { cid } = req.params;
 
-    // Tenta encontrar e deletar o carrinho pelo ID
     const deletedCart = await cartsModel.findByIdAndDelete(cid);
 
     if (!deletedCart) {
@@ -65,6 +95,35 @@ router.delete('/:cid', async (req, res) => {
     res.status(500).json({ error: 'Erro ao excluir o carrinho' });
   }
 });
+
+
+router.put('/:cid/products', async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const { products } = req.body;
+
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ error: 'Envie um array de IDs de produtos para remoção' });
+    }
+
+    const updatedCart = await cartsModel.updateOne(
+      { _id: cid },
+      { $pull: { products: { $in: products } } }
+    );
+
+    if (updatedCart.modifiedCount === 0) {
+      return res.status(404).json({ message: 'Carrinho não encontrado ou produtos inexistentes no carrinho' });
+    }
+
+    res.status(200).json({ message: 'Produtos removidos do carrinho com sucesso' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao remover produtos do carrinho' });
+  }
+});
+
+
+
 
 
 
