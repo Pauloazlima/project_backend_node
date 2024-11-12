@@ -47,4 +47,25 @@ router.post('/add/:cid', async (req, res) => {
   }
 });
 
+
+router.delete('/:cid', async (req, res) => {
+  try {
+    const { cid } = req.params;
+
+    // Tenta encontrar e deletar o carrinho pelo ID
+    const deletedCart = await cartsModel.findByIdAndDelete(cid);
+
+    if (!deletedCart) {
+      return res.status(404).json({ error: 'Carrinho não encontrado' });
+    }
+
+    res.status(200).json({ message: 'Carrinho excluído com sucesso' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao excluir o carrinho' });
+  }
+});
+
+
+
 module.exports = router
