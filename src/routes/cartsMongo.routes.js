@@ -31,6 +31,36 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/paginated', async (req, res) => {
+  try {
+      const { limit = 10, page = 1, sort, query } = req.query;
+
+      // Configuração para filtros e ordenação
+      const filter = query ? { 'products.productId': query } : {};
+      const options = {
+          page: parseInt(page),
+          limit: parseInt(limit),
+          sort: sort === 'asc' ? { 'products.totalItemPrice': 1 } : sort === 'desc' ? { 'products.totalItemPrice': -1 } : {},
+          populate: 'products.productId' // Popula os detalhes dos produtos
+      };
+
+      const carts = await cartsModel.paginate(filter, options);
+
+      res.status(200).json({
+          status: 'success',
+          payload: carts.docs,
+          totalDocs: carts.totalDocs,
+          totalPages: carts.totalPages,
+          page: carts.page,
+          limit: carts.limit
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Erro ao buscar os carrinhos' });
+  }
+});
+
+
 router.get('/:cid', async (req, res) => {
   try {
     const { cid } = req.params;
