@@ -7,8 +7,12 @@ const router = express.Router();
 router.post('/create', async (req, res) => {
   try {
     const inputInfo = await cartsModel.create(req.body);
-    const populatedCart = await inputInfo.populate('products.productId'); // Popula os detalhes dos produtos
-    res.status(201).json({ result: 'success', payload: populatedCart });
+    if (inputInfo){
+    const populatedCart = await inputInfo.populate('products.productId');
+    res.status(201).json({ result: 'success', payload: populatedCart })}
+    else {
+      res.status(400).json({ result: 'error', message: 'Carrinho não foi criado' });
+    };
   } catch (error) {
     console.error(error);
     res.status(500).send({ result: 'erro', error: 'Erro ao adicionar o carrinho' });
@@ -45,19 +49,26 @@ router.get('/:cid', async (req, res) => {
 });
 
 
-
 router.put('/:cid', async (req, res) => {
-	try{
-		const { cid } = req.params;
+  try {
+    const { cid } = req.params;
 
-		let getCartInfo = await cartsModel.findByIdAndUpdate(cid, req.body)
 
-		res.status(201).json({result: 'success', payload: getCartInfo})
-		
-	} catch(error){
-		res.status(500).send({result: 'erro', error: 'Cart não localizado'})
-	}
-})
+    const cart = await cartsModel.findById(cid);
+    if (!cart) {
+      return res.status(404).json({ result: 'erro', error: 'Carrinho não encontrado' });
+    }
+
+    const updatedCart = await cart.updateCart(req.body);
+
+    res.status(200).json({ result: 'success', payload: updatedCart });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ result: 'erro', error: 'Erro ao atualizar o carrinho' });
+  }
+});
+
+
 router.post('/add/:cid', async (req, res) => {
   try {
     const { cid } = req.params;
@@ -67,7 +78,7 @@ router.post('/add/:cid', async (req, res) => {
       cid,
       { $addToSet: { products: { $each: products } } },
       { new: true }
-    ).populate('products.productId'); // Popula os detalhes dos produtos
+    ).populate('products.productId');
 
     res.status(200).json(updatedCart);
   } catch (error) {
@@ -119,10 +130,6 @@ router.put('/:cid/products', async (req, res) => {
     res.status(500).json({ error: 'Erro ao remover produtos do carrinho' });
   }
 });
-
-
-
-
 
 
 module.exports = router
