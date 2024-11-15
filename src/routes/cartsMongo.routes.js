@@ -4,22 +4,21 @@ const cartsModel = require('../models/carts.model')
 
 const router = express.Router();
 
-router.post('/create', async (req,res) => {
-	try {
-		console.log(req.body);
-		
-			let inputInfo = await cartsModel.create(req.body)
-			res.status(201).json({result: 'success', payload: inputInfo})
-	} catch (error){
-		console.log('não foi possivel adicionar as informacoes do produto');
-		res.status(500).send({result: 'erro', error: 'Erro ao adicionar'})
-	}
-})
+router.post('/create', async (req, res) => {
+  try {
+    const inputInfo = await cartsModel.create(req.body);
+    const populatedCart = await inputInfo.populate('products.productId'); // Popula os detalhes dos produtos
+    res.status(201).json({ result: 'success', payload: populatedCart });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ result: 'erro', error: 'Erro ao adicionar o carrinho' });
+  }
+});
 
 
 router.get('/', async (req, res) => {
   try {
-    const carts = await cartsModel.find();
+    const carts = await cartsModel.find().populate('products.productId');
 
     res.status(200).json(carts);
   } catch (error) {
@@ -32,7 +31,7 @@ router.get('/:cid', async (req, res) => {
   try {
     const { cid } = req.params;
 
-    const cart = await cartsModel.findById(cid);
+    const cart = await cartsModel.findById(cid).populate('products.productId');
 
     if (!cart) {
       return res.status(404).json({ message: 'Carrinho não encontrado' });
@@ -59,7 +58,6 @@ router.put('/:cid', async (req, res) => {
 		res.status(500).send({result: 'erro', error: 'Cart não localizado'})
 	}
 })
-
 router.post('/add/:cid', async (req, res) => {
   try {
     const { cid } = req.params;
@@ -69,7 +67,7 @@ router.post('/add/:cid', async (req, res) => {
       cid,
       { $addToSet: { products: { $each: products } } },
       { new: true }
-    );
+    ).populate('products.productId'); // Popula os detalhes dos produtos
 
     res.status(200).json(updatedCart);
   } catch (error) {
