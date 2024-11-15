@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const cartsCollection = 'carts';
 const Product = require('./products.model');
@@ -81,4 +82,5 @@ cartsSchema.methods.updateCart = async function (updates) {
   return updatedCart;
 };
 
+cartsSchema.plugin(mongoosePaginate);
 module.exports = mongoose.model(cartsCollection, cartsSchema);
