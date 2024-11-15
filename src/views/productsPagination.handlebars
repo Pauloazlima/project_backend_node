@@ -1,0 +1,20 @@
+<h1>Produtos Paginados</h1>
+<ul>
+  {{#each products.docs}}
+  <li>
+    <h2>{{this.title}}</h2>
+    <p>{{this.description}}</p>
+    <p>Preço: {{this.price}}</p>
+    <button>Adicionar ao Carrinho</button>
+    <a href="/products/{{this._id}}">Detalhes</a>
+  </li>
+  {{/each}}
+</ul>
+<div>
+  {{#if products.hasPrevPage}}
+  <a href="{{products.prevLink}}">Página Anterior</a>
+  {{/if}}
+  {{#if products.hasNextPage}}
+  <a href="{{products.nextLink}}">Próxima Página</a>
+  {{/if}}
+</div>

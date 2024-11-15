@@ -161,5 +161,23 @@ router.put('/:cid/products', async (req, res) => {
   }
 });
 
+router.get('/paginate/:cid', async (req, res) => {
+  try {
+    const { cid } = req.params;
+    const cart = await cartsModel.findById(cid).populate('products.productId');
+
+    if (!cart) {
+      return res.status(404).send({ error: 'Carrinho não encontrado' });
+    }
+
+    res.status(200).json({ status: 'success', payload: cart.products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao buscar carrinho' });
+  }
+});
+
+
+
 
 module.exports = router

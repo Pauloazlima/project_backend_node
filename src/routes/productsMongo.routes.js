@@ -57,18 +57,7 @@ router.put('/:id', async(req,res) => {
   }
 });
 
-router.get('/:id', async(req,res) => {
-  try{
-    const {id} = req.params;
 
-    const getInfo = await productsModel.findById(id)
-    
-    res.status(201).send({result: 'success', payload: getInfo})
-    } catch (error) {
-    console.log('Product not found');
-    res.status(500).send({result: 'erro', error: 'Erro ao atualizar'})
-  }
-});
 
 router.delete('/:id', async (req, res) => {
   try {
@@ -85,6 +74,86 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.get('/paginate', async (req, res) => {
+  try {
+    const { limit = 10, page = 1, sort, query } = req.query;
+
+    // Configurações de filtros
+    const filter = query
+      ? { $or: [{ category: query }, { stock: { $gt: 0 } }] }
+      : {};
+
+    // Configurações de opções
+    const options = {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      sort: sort === 'asc' ? { price: 1 } : sort === 'desc' ? { price: -1 } : {}
+    };
+
+    // Paginação dos produtos
+    const products = await productsModel.paginate(filter, options);
+
+    // Criação de links de navegação
+    const prevLink = products.hasPrevPage
+      ? `/paginate?limit=${limit}&page=${products.prevPage}&sort=${sort}&query=${query}`
+      : null;
+    const nextLink = products.hasNextPage
+      ? `/paginate?limit=${limit}&page=${products.nextPage}&sort=${sort}&query=${query}`
+      : null;
+
+    res.status(200).json({
+      status: 'success',
+      payload: products.docs,
+      totalPages: products.totalPages,
+      prevPage: products.prevPage,
+      nextPage: products.nextPage,
+      page: products.page,
+      hasPrevPage: products.hasPrevPage,
+      hasNextPage: products.hasNextPage,
+      prevLink,
+      nextLink
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ status: 'error', error: 'Erro ao buscar produtos' });
+  }
+});
+
+router.get('/products/paginate', async (req, res) => {
+  try {
+    const { limit = 10, page = 1, sort, query } = req.query;
+
+    const filter = query
+      ? { $or: [{ category: query }, { stock: { $gt: 0 } }] }
+      : {};
+
+    const options = {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      sort: sort === 'asc' ? { price: 1 } : sort === 'desc' ? { price: -1 } : {}
+    };
+
+    const products = await productsModel.paginate(filter, options);
+
+    res.render('productsPagination', { products });
+  } catch (error) {
+    res.status(500).send({ error: 'Erro ao renderizar produtos' });
+  }
+});
+
+
+router.get('/:id', async(req,res) => {
+  try{
+    const {id} = req.params;
+
+    const getInfo = await productsModel.findById(id)
+    
+    res.status(201).send({result: 'success', payload: getInfo})
+    } catch (error) {
+    console.log('Product not found');
+    res.status(500).send({result: 'erro', error: 'Erro ao atualizar'})
+  }
+});
 
 
 module.exports = router
