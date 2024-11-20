@@ -29,18 +29,18 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await User.findOne({ email }); // Verifica se o e-mail existe
+        const user = await User.findOne({ email }); // Verifica se o usuário existe
         if (!user) {
             return res.status(401).json({ message: 'Credenciais inválidas' });
         }
 
-        // Se você não está usando hashing, compare diretamente:
+        // Comparação direta ou com bcrypt (se aplicável)
         if (user.password !== password) {
             return res.status(401).json({ message: 'Credenciais inválidas' });
         }
 
-        // Redireciona para a rota de produtos ou retorna sucesso
-        return res.status(200).json({ message: 'Login bem-sucedido', user });
+        // Se login for bem-sucedido, redireciona para a rota de produtos
+        return res.redirect('/products/mongo/products/paginate');
     } catch (error) {
         console.error('Erro durante o login:', error);
         return res.status(500).json({ message: 'Erro interno do servidor' });
