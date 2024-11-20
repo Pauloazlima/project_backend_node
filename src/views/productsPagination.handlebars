@@ -24,7 +24,7 @@
 
 <script>
   function addToCart(productId) {
-    fetch('/carts/mongo/add', {
+    fetch('/carts/mongo/add/:productId', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ productId })
