@@ -26,25 +26,25 @@ router.post('/register', async (req, res) => {
 
 // Login
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+    const { email, password } = req.body;
 
-  try {
-    const user = await User.findOne({ email });
-    if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(401).json({ error: 'Credenciais inválidas' });
+    try {
+        const user = await User.findOne({ email }); // Verifica se o e-mail existe
+        if (!user) {
+            return res.status(401).json({ message: 'Credenciais inválidas' });
+        }
+
+        // Se você não está usando hashing, compare diretamente:
+        if (user.password !== password) {
+            return res.status(401).json({ message: 'Credenciais inválidas' });
+        }
+
+        // Redireciona para a rota de produtos ou retorna sucesso
+        return res.status(200).json({ message: 'Login bem-sucedido', user });
+    } catch (error) {
+        console.error('Erro durante o login:', error);
+        return res.status(500).json({ message: 'Erro interno do servidor' });
     }
-
-    req.session.user = {
-      id: user._id,
-      name: user.name,
-      role: user.role,
-    };
-
-    res.status(200).json({ message: 'Login bem-sucedido', user: req.session.user });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro ao fazer login' });
-  }
 });
 
 // Logout
