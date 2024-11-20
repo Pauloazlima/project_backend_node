@@ -8,6 +8,12 @@ const ProductManager = require('./modules/ProductManager');
 const productManager = new ProductManager('src/files/products.json');
 const httpServer = createServer(app);
 const io = new Server(httpServer);
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const bcrypt = require('bcryptjs');
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const mongoose = require('mongoose');
 
@@ -21,7 +27,9 @@ const cartsMongoRouter = require('./routes/cartsMongo.routes')
 
 const Message = require('./models/messages.model');
 
-app.use(express.json());
+const authRouter = require('./routes/auth.routes');
+app.use('/auth', authRouter);
+
 
 mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/')
 .then( (() => {
@@ -72,6 +80,18 @@ io.on('connection', (socket) => {
     console.log('Cliente desconectado');
   });
 });
+
+app.use(
+  session({
+    secret: 'seuSegredoSuperSecreto',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: 'mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/',
+      ttl: 60 * 60, // Sessões expiram em 1 hora
+    }),
+  })
+);
 
 httpServer.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
