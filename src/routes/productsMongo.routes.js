@@ -164,18 +164,22 @@ router.get('/products/paginate', async (req, res) => {
 });
 
 
-router.get('/:id', async(req,res) => {
-  try{
-    const {id} = req.params;
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await productsModel.findById(id).lean(); // Objeto simples
 
-    const getInfo = await productsModel.findById(id)
-    
-    res.status(201).send({result: 'success', payload: getInfo})
-    } catch (error) {
-    console.log('Product not found');
-    res.status(500).send({result: 'erro', error: 'Erro ao atualizar'})
+    if (!product) {
+      return res.status(404).render('error', { message: 'Produto não encontrado' });
+    }
+
+    res.render('productDetails', { product });
+  } catch (error) {
+    console.error('Erro ao buscar produto:', error);
+    res.status(500).render('error', { message: 'Erro ao buscar produto' });
   }
 });
+
 
 
 module.exports = router
