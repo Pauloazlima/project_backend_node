@@ -123,37 +123,63 @@ router.get('/products/paginate', async (req, res) => {
   try {
     const { limit = 10, page = 1, sort, query } = req.query;
 
+    // Configuração de filtros
     const filter = query
       ? { $or: [{ category: query }, { stock: { $gt: 0 } }] }
       : {};
 
+    // Configuração de opções com .lean()
     const options = {
       page: parseInt(page),
       limit: parseInt(limit),
-      sort: sort === 'asc' ? { price: 1 } : sort === 'desc' ? { price: -1 } : {}
+      sort: sort === 'asc' ? { price: 1 } : sort === 'desc' ? { price: -1 } : {},
+      lean: true // Retorna objetos simples
     };
 
+    // Paginação dos produtos
     const products = await productsModel.paginate(filter, options);
 
-    res.render('productsPagination', { products });
+    // Criação de links de navegação
+    const prevLink = products.hasPrevPage
+      ? `/products/mongo/products/paginate?limit=${limit}&page=${products.prevPage}&sort=${sort}&query=${query}`
+      : null;
+    const nextLink = products.hasNextPage
+      ? `/products/mongo/products/paginate?limit=${limit}&page=${products.nextPage}&sort=${sort}&query=${query}`
+      : null;
+
+    // Enviar os dados para a view
+    res.render('productsPagination', { 
+      products: {
+        docs: products.docs,
+        hasPrevPage: products.hasPrevPage,
+        hasNextPage: products.hasNextPage,
+        prevLink,
+        nextLink
+      } 
+    });
   } catch (error) {
+    console.error(error);
     res.status(500).send({ error: 'Erro ao renderizar produtos' });
   }
 });
 
 
-router.get('/:id', async(req,res) => {
-  try{
-    const {id} = req.params;
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await productsModel.findById(id).lean(); // Objeto simples
 
-    const getInfo = await productsModel.findById(id)
-    
-    res.status(201).send({result: 'success', payload: getInfo})
-    } catch (error) {
-    console.log('Product not found');
-    res.status(500).send({result: 'erro', error: 'Erro ao atualizar'})
+    if (!product) {
+      return res.status(404).render('error', { message: 'Produto não encontrado' });
+    }
+
+    res.render('productDetails', { product });
+  } catch (error) {
+    console.error('Erro ao buscar produto:', error);
+    res.status(500).render('error', { message: 'Erro ao buscar produto' });
   }
 });
+
 
 
 module.exports = router

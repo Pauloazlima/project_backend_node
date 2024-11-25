@@ -1,20 +1,40 @@
-<h1>Produtos Paginados</h1>
+<h1>Home e-commerce</h1>
 <ul>
   {{#each products.docs}}
   <li>
     <h2>{{this.title}}</h2>
-    <p>{{this.description}}</p>
-    <p>Preço: {{this.price}}</p>
-    <button>Adicionar ao Carrinho</button>
-    <a href="/products/{{this._id}}">Detalhes</a>
+    <p>Preço: R$ {{this.price}}</p>
+    <p>Categoria: {{this.category}}</p>
+    <p>ID: {{this._id}}</p>
+    <button onclick="addToCart('{{this._id}}')">Adicionar ao Carrinho</button>
+    <a href="/products/mongo/{{this._id}}" target="_blank">
+      <button>Detalhes</button>
+    </a>
   </li>
   {{/each}}
 </ul>
 <div>
   {{#if products.hasPrevPage}}
-  <a href="{{products.prevLink}}">Página Anterior</a>
+    <a href="{{products.prevLink}}">Página Anterior</a>
   {{/if}}
   {{#if products.hasNextPage}}
-  <a href="{{products.nextLink}}">Próxima Página</a>
+    <a href="{{products.nextLink}}">Próxima Página</a>
   {{/if}}
 </div>
+
+<script>
+  function addToCart(productId) {
+    fetch('/carts/mongo/add/:productId', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId })
+    })
+    .then(response => response.json())
+    .then(data => alert('Produto adicionado ao carrinho com sucesso!'))
+    .catch(error => alert('Erro ao adicionar produto ao carrinho'));
+  }
+</script>
+
+
+
+
