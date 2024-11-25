@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 
 router.get('/realtimeproducts', async (req, res) => {
   const products = await productManager.getProducts();
-  res.render('layouts/realTimeProducts', { products });
+  res.render('realTimeProducts', { products });
 })
 
 router.get('/login', (req, res) => res.render('login'));
