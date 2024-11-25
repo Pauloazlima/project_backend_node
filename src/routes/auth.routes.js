@@ -4,9 +4,8 @@ const User = require('../models/user.model');
 
 const router = express.Router();
 
-// Registro de usuário
 router.post('/register', async (req, res) => {
-    console.log('Body recebido:', req.body); // Log para debug
+    console.log('Body recebido:', req.body);
     const { name, email, password } = req.body;
   
     if (!name || !email || !password) {
@@ -14,7 +13,6 @@ router.post('/register', async (req, res) => {
     }
   
     try {
-      // Criação do usuário (substitua pela lógica real)
       const newUser = new User({ name, email, password });
       await newUser.save();
       res.redirect('/login');
@@ -24,22 +22,21 @@ router.post('/register', async (req, res) => {
     }
   })
 
-// Login
+
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await User.findOne({ email }); // Verifica se o usuário existe
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({ message: 'Credenciais inválidas' });
         }
 
-        // Comparação direta ou com bcrypt (se aplicável)
+        
         if (user.password !== password) {
             return res.status(401).json({ message: 'Credenciais inválidas' });
         }
 
-        // Se login for bem-sucedido, redireciona para a rota de produtos
         return res.redirect('/products/mongo/products/paginate');
     } catch (error) {
         console.error('Erro durante o login:', error);
@@ -47,7 +44,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Logout
 router.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {

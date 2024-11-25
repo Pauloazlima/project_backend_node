@@ -88,7 +88,7 @@ app.use(
     saveUninitialized: false,
     store: MongoStore.create({
       mongoUrl: 'mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/',
-      ttl: 60 * 60, // Sessões expiram em 1 hora
+      ttl: 60 * 60, 
     }),
   })
 );

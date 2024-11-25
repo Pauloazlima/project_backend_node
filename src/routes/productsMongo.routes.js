@@ -78,22 +78,19 @@ router.get('/paginate', async (req, res) => {
   try {
     const { limit = 10, page = 1, sort, query } = req.query;
 
-    // Configurações de filtros
+    
     const filter = query
       ? { $or: [{ category: query }, { stock: { $gt: 0 } }] }
       : {};
 
-    // Configurações de opções
     const options = {
       page: parseInt(page),
       limit: parseInt(limit),
       sort: sort === 'asc' ? { price: 1 } : sort === 'desc' ? { price: -1 } : {}
     };
 
-    // Paginação dos produtos
     const products = await productsModel.paginate(filter, options);
 
-    // Criação de links de navegação
     const prevLink = products.hasPrevPage
       ? `/paginate?limit=${limit}&page=${products.prevPage}&sort=${sort}&query=${query}`
       : null;
@@ -123,23 +120,20 @@ router.get('/products/paginate', async (req, res) => {
   try {
     const { limit = 10, page = 1, sort, query } = req.query;
 
-    // Configuração de filtros
     const filter = query
       ? { $or: [{ category: query }, { stock: { $gt: 0 } }] }
       : {};
 
-    // Configuração de opções com .lean()
+
     const options = {
       page: parseInt(page),
       limit: parseInt(limit),
       sort: sort === 'asc' ? { price: 1 } : sort === 'desc' ? { price: -1 } : {},
-      lean: true // Retorna objetos simples
+      lean: true 
     };
 
-    // Paginação dos produtos
     const products = await productsModel.paginate(filter, options);
 
-    // Criação de links de navegação
     const prevLink = products.hasPrevPage
       ? `/products/mongo/products/paginate?limit=${limit}&page=${products.prevPage}&sort=${sort}&query=${query}`
       : null;
@@ -147,7 +141,6 @@ router.get('/products/paginate', async (req, res) => {
       ? `/products/mongo/products/paginate?limit=${limit}&page=${products.nextPage}&sort=${sort}&query=${query}`
       : null;
 
-    // Enviar os dados para a view
     res.render('productsPagination', { 
       products: {
         docs: products.docs,
@@ -167,7 +160,7 @@ router.get('/products/paginate', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const product = await productsModel.findById(id).lean(); // Objeto simples
+    const product = await productsModel.findById(id).lean(); 
 
     if (!product) {
       return res.status(404).render('error', { message: 'Produto não encontrado' });
