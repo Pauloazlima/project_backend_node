@@ -20,7 +20,7 @@ router.get('/register', (req, res) => res.render('register'));
 
 
 router.get('/products', requireAuth, async (req, res) => {
-  const products = await productManager.getProducts();
+  const products = await productsModel.find().lean();
   res.render('products', { user: req.session.user, products });
 });
 
