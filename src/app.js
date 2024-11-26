@@ -34,7 +34,7 @@ app.use('/auth', authRouter);
 mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  dbName: 'test', // Substitua por seu banco de dados real
+  dbName: 'test',
 })
 .then(() => {
   console.log('Conectado ao MongoDB com sucesso');
