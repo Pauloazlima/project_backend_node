@@ -31,12 +31,18 @@ const authRouter = require('./routes/auth.routes');
 app.use('/auth', authRouter);
 
 
-mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/')
-.then( (() => {
-  console.log('Conectado ao MongoDB com sucesso');
-})).catch((error) => {
-  console.log('Erro ao conectar ao MongoDB: ', error);
+mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  dbName: 'test', // Substitua por seu banco de dados real
 })
+.then(() => {
+  console.log('Conectado ao MongoDB com sucesso');
+})
+.catch((error) => {
+  console.log('Erro ao conectar ao MongoDB: ', error);
+});
+
 
 app.get('/chat', (req, res) => {
   res.render('chat')
