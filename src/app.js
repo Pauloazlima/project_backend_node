@@ -32,8 +32,6 @@ app.use('/auth', authRouter);
 
 
 mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   dbName: 'test',
 })
 .then(() => {

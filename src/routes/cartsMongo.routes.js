@@ -35,13 +35,12 @@ router.get('/paginated', async (req, res) => {
   try {
       const { limit = 10, page = 1, sort, query } = req.query;
 
-      // Configuração para filtros e ordenação
       const filter = query ? { 'products.productId': query } : {};
       const options = {
           page: parseInt(page),
           limit: parseInt(limit),
           sort: sort === 'asc' ? { 'products.totalItemPrice': 1 } : sort === 'desc' ? { 'products.totalItemPrice': -1 } : {},
-          populate: 'products.productId' // Popula os detalhes dos produtos
+          populate: 'products.productId'
       };
 
       const carts = await cartsModel.paginate(filter, options);
@@ -195,10 +194,5 @@ router.delete('/deleteAllProducts/:cid', async (req, res) => {
     res.status(500).json({ error: 'Erro ao remover os produtos do carrinho' });
   }
 });
-
-
-
-
-
 
 module.exports = router
