@@ -31,21 +31,6 @@ router.post('/add', async (req, res) => {
   }
 });
 
-
-// router.post('/add', async (req,res) => {
-//   try {
-//       let  {title, description, price, thumbnail, code, stock, category} = req.body;
-//       if (!title, !description, !price, !thumbnail, !code, !stock, !category){
-//         return res.status(500).send({result: 'Todos os campos são obrigatórios'})
-//       }
-//       let inputInfo = await productsModel.create(req.body)
-//       res.status(201).json({result: 'success', payload: inputInfo})
-//   } catch (error){
-//     console.log('não foi possivel adicionar as informacoes do produto');
-//     res.status(500).send({result: 'erro', error: 'Erro ao adicionar'})
-//   }
-// })
-
 router.put('/:id', async(req,res) => {
   try{
     let {id} = req.params
