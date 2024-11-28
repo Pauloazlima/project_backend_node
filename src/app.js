@@ -3,11 +3,9 @@ const app = express();
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const handlebars = require('express-handlebars');
-const path = require('path');
-const ProductManager = require('./modules/ProductManager');
-const productManager = new ProductManager('src/files/products.json');
 const httpServer = createServer(app);
 const io = new Server(httpServer);
+const path = require('path');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcryptjs');
@@ -19,8 +17,6 @@ const mongoose = require('mongoose');
 
 PORT = 8080
 
-const productsRouter = require('./routes/products.routes')
-const cartsRouter = require('./routes/carts.routes')
 const viewRouter = require('./routes/view.routes');
 const productsMongoRouter = require('./routes/productsMongo.routes')
 const cartsMongoRouter = require('./routes/cartsMongo.routes')
@@ -50,8 +46,6 @@ app.engine('handlebars', handlebars.engine(/*{ defaultLayout: 'realTimeProducts'
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
 app.use('/', viewRouter);
 app.use('/products/mongo', productsMongoRouter)
 app.use('/carts/mongo', cartsMongoRouter)

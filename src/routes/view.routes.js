@@ -1,7 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const ProductManager = require('../modules/ProductManager');
-const productManager = new ProductManager('src/files/products.json');
 const { requireAuth } = require('../middleware/auth.middleware');
 const productsModel = require('../models/products.model')
 

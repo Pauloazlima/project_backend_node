@@ -14,6 +14,33 @@ router.get('/', async (req,res) => {
 }
 })
 
+router.get('/getById/:id', async (req,res) => {
+  try {
+    const { id } = req.params;
+    let getProductById = await productsModel.findById(id);
+    res.json({result: 'sucesso', payload: getProductById})
+  } catch (error){
+    console.log('products notFound', error);
+    res.status(500).send({result: error})
+}
+})
+
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await productsModel.findById(id).lean(); 
+
+    if (!product) {
+      return res.status(404).render('error', { message: 'Produto não encontrado' });
+    }
+
+    res.render('productDetails', { product });
+  } catch (error) {
+    console.error('Erro ao buscar produto:', error);
+    res.status(500).render('error', { message: 'Erro ao buscar produto' });
+  }
+});
+
 
 router.post('/add', async (req, res) => {
   try {
@@ -160,21 +187,7 @@ router.get('/products/paginate', async (req, res) => {
 });
 
 
-router.get('/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const product = await productsModel.findById(id).lean(); 
 
-    if (!product) {
-      return res.status(404).render('error', { message: 'Produto não encontrado' });
-    }
-
-    res.render('productDetails', { product });
-  } catch (error) {
-    console.error('Erro ao buscar produto:', error);
-    res.status(500).render('error', { message: 'Erro ao buscar produto' });
-  }
-});
 
 
 
