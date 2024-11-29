@@ -50,8 +50,8 @@ passport.use(
 passport.use(
   new GitHubStrategy(
     {
-      clientID: 'GITHUB_CLIENT_ID', // Substitua pelo seu Client ID
-      clientSecret: 'GITHUB_CLIENT_SECRET', // Substitua pelo seu Client Secret
+      clientID: 'Ov23li9JBwNZh4G6BkwW', // Substitua pelo seu Client ID
+      clientSecret: '95f5387aa979480b62533125c1b91cb38317c20f', // Substitua pelo seu Client Secret
       callbackURL: 'http://localhost:8080/auth/github/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
