@@ -54,7 +54,6 @@ const router = express.Router();
 //   });
 // });
 
-// Registro
 router.post(
   '/register',
   passport.authenticate('register', {
@@ -92,7 +91,5 @@ router.get(
     failureRedirect: '/login',
   })
 );
-
-
 
 module.exports = router;
