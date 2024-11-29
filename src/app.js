@@ -9,13 +9,14 @@ const path = require('path');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require('bcryptjs');
+const passport = require('../src/config/passport');
+const mongoose = require('mongoose');
+
+PORT = 8080
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const mongoose = require('mongoose');
-
-PORT = 8080
 
 const viewRouter = require('./routes/view.routes');
 const productsMongoRouter = require('./routes/productsMongo.routes')
@@ -24,7 +25,6 @@ const cartsMongoRouter = require('./routes/cartsMongo.routes')
 const Message = require('./models/messages.model');
 
 const authRouter = require('./routes/auth.routes');
-app.use('/auth', authRouter);
 
 
 mongoose.connect('mongodb+srv://pauloazlima3008:coderback@coderback.kbql2.mongodb.net/', {
@@ -46,6 +46,7 @@ app.engine('handlebars', handlebars.engine(/*{ defaultLayout: 'realTimeProducts'
 app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'views'));
 
+app.use('/auth', authRouter);
 app.use('/', viewRouter);
 app.use('/products/mongo', productsMongoRouter)
 app.use('/carts/mongo', cartsMongoRouter)
