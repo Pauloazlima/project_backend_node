@@ -57,12 +57,18 @@ passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         let user = await User.findOne({ githubId: profile.id });
+        console.log('-----');
+        console.log(profile);
         if (!user) {
           user = new User({
             githubId: profile.id,
             name: profile.displayName || 'GitHub User',
-            email: profile.emails[0].value,
+            email: profile.email || 'paulo.azlima3008@gmail.com',
+            password: 'senhaPadrao'
           });
+
+          console.log('----user----');
+          console.log(user);
           await user.save();
         }
         done(null, user);

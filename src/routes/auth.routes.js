@@ -63,7 +63,7 @@ router.post(
   })
 );
 
-// Login
+
 router.post(
   '/login',
   passport.authenticate('login', {
@@ -73,7 +73,6 @@ router.post(
   })
 );
 
-// Logout
 router.post('/logout', (req, res) => {
   req.logout((err) => {
     if (err) return res.status(500).json({ error: 'Erro ao fazer logout' });
@@ -81,13 +80,14 @@ router.post('/logout', (req, res) => {
   });
 });
 
-// GitHub Login
+// GitHub Login - nao esquecer do session: false
 router.get('/github', passport.authenticate('github'));
 
 router.get(
   '/github/callback',
   passport.authenticate('github', {
-    successRedirect: '/products',
+    session: false,
+    successRedirect: '/realtimeproducts',
     failureRedirect: '/login',
   })
 );
