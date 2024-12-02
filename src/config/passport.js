@@ -46,12 +46,11 @@ passport.use(
   )
 );
 
-// Estratégia GitHub
 passport.use(
   new GitHubStrategy(
     {
-      clientID: 'Ov23li9JBwNZh4G6BkwW', // Substitua pelo seu Client ID
-      clientSecret: '95f5387aa979480b62533125c1b91cb38317c20f', // Substitua pelo seu Client Secret
+      clientID: 'Ov23li9JBwNZh4G6BkwW',
+      clientSecret: '95f5387aa979480b62533125c1b91cb38317c20f',
       callbackURL: 'http://localhost:8080/auth/github/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -79,12 +78,12 @@ passport.use(
   )
 );
 
-// Serialização
+
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
-// Desserialização
+
 passport.deserializeUser((id, done) => {
   User.findById(id, (err, user) => {
     done(err, user);
