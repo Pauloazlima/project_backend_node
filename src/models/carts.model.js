@@ -38,13 +38,14 @@ cartsSchema.methods.calculateTotalPrice = async function () {
 
   // Percorre os produtos do carrinho e atualiza os preços
   for (const product of this.products) {
-    const dbProduct = await Product.findById(product.productId);
+    console.log(product)
+    const dbProduct = await Product.findById(product.id);
     if (dbProduct) {
       product.priceAtPurchase = dbProduct.price; // Atualiza o preço
       product.totalItemPrice = product.quantity * product.priceAtPurchase; // Recalcula o total do item
       subtotal += product.totalItemPrice;
     } else {
-      throw new Error(`Produto com ID ${product.productId} não encontrado.`);
+      throw new Error(`Produto com ID ${product.id} não encontrado.`);
     }
   }
 

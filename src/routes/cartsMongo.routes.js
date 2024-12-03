@@ -1,6 +1,7 @@
 const express = require('express');
 
 const cartsModel = require('../models/carts.model')
+const productModel = require('../models/products.model')
 
 const router = express.Router();
 
@@ -110,6 +111,33 @@ router.post('/add/:cid', async (req, res) => {
     ).populate('products.productId');
 
     res.status(200).json(updatedCart);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erro ao atualizar o carrinho' });
+  }
+});
+
+
+router.post('/addToCart/:productId', async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    const lastRecord = await cartsModel.findOne().sort({ _id: -1 });
+    const productData = await productModel.findById(productId)
+
+    console.log(lastRecord.id, productData)
+
+    const updatedCart = await cartsModel.findByIdAndUpdate(
+      lastRecord.id,
+      { $addToSet: { products: [{
+        productId: productId,
+        quantity: 1,
+        ...productData
+      }] } },
+      { new: true }
+    ).populate('products.productId');
+
+    res.status(200).json(lastRecord.id);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Erro ao atualizar o carrinho' });

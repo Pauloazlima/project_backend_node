@@ -24,14 +24,13 @@
 
 <script>
   function addToCart(productId) {
-    fetch('/carts/mongo/add/:productId', {
+    fetch(`/carts/mongo/addToCart/${productId}`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ productId })
+      headers: { 'Content-Type': 'application/json' }
     })
     .then(response => response.json())
-    .then(data => alert('Produto adicionado ao carrinho com sucesso!'))
-    .catch(error => alert('Erro ao adicionar produto ao carrinho'));
+    .then(data => alert(`${productId} adicionado ao carrinho com sucesso!`))
+    .catch(error => alert(`Erro ao adicionar produto ${productId} ao carrinho`));
   }
 </script>
 
