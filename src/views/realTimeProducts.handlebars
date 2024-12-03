@@ -9,16 +9,18 @@
 <body>
     <h1>Real Time Product List</h1>
 
+
     <form id="productForm">
-        <input type="text" id="title" placeholder="Title" required>
-        <input type="text" id="description" placeholder="Description" required>
-        <input type="number" id="price" placeholder="Price" required>
-        <input type="text" id="thumbnail" placeholder="Thumbnail URL" required>
-        <input type="text" id="code" placeholder="Product Code" required>
-        <input type="number" id="stock" placeholder="Stock" required>
-        <input type="text" id="category" placeholder="Category" required>
-        <button type="submit">Add Product</button>
-    </form>
+    <input type="text" id="title" name="title" placeholder="Title" required>
+    <input type="text" id="description" name="description" placeholder="Description" required>
+    <input type="number" id="price" name="price" placeholder="Price" required>
+    <input type="text" id="thumbnail" name="thumbnail" placeholder="Thumbnail URL" required>
+    <input type="text" id="code" name="code" placeholder="Product Code" required>
+    <input type="number" id="stock" name="stock" placeholder="Stock" required>
+    <input type="text" id="category" name="category" placeholder="Category" required>
+    <button type="submit">Add Product</button>
+</form>
+
 
     <ul id="productList">
         {{#each products}}
@@ -40,7 +42,7 @@
         
         const socket = io();
 
-        document.getElementById('productForm').addEventListener('submit', function(event) {
+        document.getElementById('productForm').addEventListener('submit', async function(event) {
             event.preventDefault();
             const productData = {
                 title: document.getElementById('title').value,
@@ -51,6 +53,35 @@
                 stock: document.getElementById('stock').value,
                 category: document.getElementById('category').value
             };
+
+
+            console.log('------------')
+            console.log(productData)
+
+            try {
+            // Enviando os dados via POST para a rota
+            const response = await fetch('http://localhost:8080/products/mongo/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(productData)
+            });
+
+            // Verificando a resposta
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Produto adicionado com sucesso:', result);
+
+                // Emitindo o evento para atualizar os produtos em tempo real
+                socket.emit('addProduct', productData);
+                document.getElementById('productForm').reset();
+            } else {
+                console.error('Erro ao adicionar produto:', await response.text());
+            }
+        } catch (error) {
+            console.error('Erro de conexão:', error);
+        }
 
             socket.emit('addProduct', productData);
 
